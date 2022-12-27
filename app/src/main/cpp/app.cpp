@@ -167,50 +167,52 @@ public:
     }
 };
 
-template <typename FILE, typename TEST>
+template <typename T>
 class Stack : Operations {
 public:
-    void calc(int k) {
-        FILE::calc(k);
-        TEST::calc(k);
+    void calc(int k) override
+    {
+        T::calc(k);
     }
 
-    void printVars()
+    void printVars() override
     {
-        FILE::printVars();
-        TEST::printVars();
+        T::printVars();
     }
 
-    void overwrite()
+    void overwrite() override
     {
-        FILE::overwrite();
-        TEST::overwrite();
+        T::overwrite();
     }
 
-    void renaimFile()
+    void renaimFile() override
     {
-        FILE::renaimFile();
-        TEST::renaimFile();
+        T::renaimFile();
     }
 
-    void deleteFile()
+    void deleteFile() override
     {
-        FILE::deleteFile();
-        TEST::deleteFile();
+        T::deleteFile();
     }
 };
 
-void start()
+template <typename T>
+void execute(T f)
 {
-    parseFile();
     for (int i = 0; i < nr; ++i) {
-        Stack<File, Test> f;
         f.calc(i);
         f.printVars();
         f.overwrite();
         f.renaimFile();
         f.deleteFile();
     }
+}
+
+void start()
+{
+    parseFile();
+    execute<File>(new File());
+    execute<Test>(new Test());
 }
 
 void parseFile()
