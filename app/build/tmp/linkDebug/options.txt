@@ -1,0 +1,7 @@
+/DEBUG
+/OUT:C:\Overwrite-Files\app\build\exe\main\debug\app.exe
+/NOLOGO
+"/LIBPATH:C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.31933\lib\x64"
+"/LIBPATH:C:\Program Files (x86)\Windows Kits\10\Lib\10.0.22000.0\um\x64"
+"/LIBPATH:C:\Program Files (x86)\Windows Kits\10\Lib\10.0.22000.0\ucrt\x64"
+C:\Overwrite-Files\app\build\obj\main\debug\bjrvo6da98oajz8w82pcnptk\app.obj

@@ -1,0 +1,4 @@
+See file:///C:/Overwrite-Files/app/build/tmp/linkDebug/output.txt for all output for linkDebug.
+linking app.exe successful.
+
+Finished linkDebug, see full log file:///C:/Overwrite-Files/app/build/tmp/linkDebug/output.txt.

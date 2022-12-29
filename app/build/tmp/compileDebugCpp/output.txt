@@ -1,0 +1,10 @@
+See file:///C:/Overwrite-Files/app/build/tmp/compileDebugCpp/output.txt for all output for compileDebugCpp.
+compiling app.cpp successful.
+app.cpp
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.31933\include\istream(679): warning C4530: C++-Handler verwendet, aber Entladesemantik ist nicht aktiviert. Geben Sie /EHsc an.
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.31933\include\istream(675): note: beim Kompilieren der Klasse Vorlage-Memberfunktion "std::fpos<_Mbstatet> std::basic_istream<char,std::char_traits<char>>::tellg(void)"
+C:\Overwrite-Files\app\src\main\cpp\app.cpp(69): note: Siehe Verweis auf die gerade kompilierte Instanziierung "std::fpos<_Mbstatet> std::basic_istream<char,std::char_traits<char>>::tellg(void)" der Funktions-Vorlage.
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.31933\include\fstream(806): note: Siehe Verweis auf die gerade kompilierte Klasse Vorlage-Instanziierung "std::basic_istream<char,std::char_traits<char>>".
+C:\Overwrite-Files\app\src\main\cpp\app.cpp(49): note: Siehe Verweis auf die gerade kompilierte Klasse Vorlage-Instanziierung "std::basic_ifstream<char,std::char_traits<char>>".
+
+Finished compileDebugCpp, see full log file:///C:/Overwrite-Files/app/build/tmp/compileDebugCpp/output.txt.
