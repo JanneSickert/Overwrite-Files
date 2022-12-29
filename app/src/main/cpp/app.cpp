@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <stdio.h>
+#include <cstdio>
 
 #define STRING_END '\0'
 #define NEW_LINE 0x5c
@@ -14,6 +15,7 @@ using namespace std;
 const char PATH_TXT[] = "Paths.txt";
 vector<string> paths;
 unsigned int nr = 0;
+vector<string> logg;
 
 void parseFile();
 void start();
@@ -49,12 +51,11 @@ public:
         ifstream file(paths[k]);
         if (!file.good())// exists
         {
-            cout << path << " do not exists" << endl;
-            exit(1);
+            logg.push_back(path + " do not exists");
         }
         if (!((folder + "/" + name) == path))
         {
-            cout << path << " is not " << (folder + "/" + name) << endl;
+            logg.push_back(path + " is not " + (folder + "/" + name));
         }
     }
 
@@ -72,15 +73,14 @@ public:
             file.read(buffer, fileSize);
             while (*buffer != STRING_END) {
                 if (*buffer != 0x0) {
-                    cout << path << " fehlerhalft überschrieben " << endl;
-                    exit(1);
+                    logg.push_back(path + " fehlerhalft überschrieben ");
                 }
                 ++buffer;
             }
             delete[] buffer;
         }
         else {
-            std::cout << "Failed to open file " << path << std::endl;
+            logg.push_back("Failed to open file " + path);
         }
     }
 
@@ -91,7 +91,7 @@ public:
     {
         ifstream file(path, ios::binary);
         if (file.good()) {
-            cout << path << " wurde nicht gelöscht " << endl;
+            logg.push_back(path + " wurde nicht gelöscht");
         }
     }
 };
@@ -162,7 +162,7 @@ public:
 
     void deleteFile() override
     {
-
+        remove(path.c_str());
     }
 };
 
@@ -213,6 +213,10 @@ void start()
     for (int i = 0; i < nr; ++i) {
         f.action(i);
         t.action(i);
+    }
+    cout << endl << endl;
+    for (int i = 0; i < logg.size(); ++i) {
+        cout << "ERROR: " << logg[i] << endl;
     }
 }
 
