@@ -201,7 +201,6 @@ public:
         printVars();
         overwrite();
         renaimFile();
-        deleteFile();
     }
 };
 
@@ -214,6 +213,8 @@ void start()
         f.action(i);
         t.action(i);
     }
+    f.deleteFile();
+    t.deleteFile();
     cout << endl << endl;
     for (int i = 0; i < logg.size(); ++i) {
         cout << "ERROR: " << logg[i] << endl;
