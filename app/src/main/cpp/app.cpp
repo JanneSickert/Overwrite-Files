@@ -1,4 +1,28 @@
+/**
+* If this define statement exists,
+* The App will overwite the files
+* there are listet in Paths.txt
+*
+*/
+#define OVERWRITE_FILES_FROM_LIST
+
+/**
+* If this statement is defind,
+* the user can select a partition to overwrite
+*/
+#define OVERWRITE_PARTITION
+
+/**
+* Create useless data blocks,
+* to Overwrite the storage.
+*/
+#define DATA_BLOCKS
+
+#undef OVERWRITE_FILES_FROM_LIST
+#undef OVERWRITE_PARTITION
+
 #pragma once
+
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>
@@ -9,6 +33,8 @@
 
 #define STRING_END '\0'
 #define NEW_LINE 0x5c
+#define POINTER_STORAGE_SIZE 1073742
+#define BLOCK_SIZE 504033
 
 using namespace std;
 
@@ -16,14 +42,29 @@ const char PATH_TXT[] = "Paths.txt";
 vector<string> paths;
 unsigned int nr = 0;
 vector<string> logg;
+string text;
 
+char* createNullArray();
+void schreibeInDatei(const std::string& dateiname, const std::string& text);
+void checkComputerWrote();
+void writeBlock();
+void startOverwriteFiles();
+void startOverwritePartition();
+void startCreateDataBlocks();
 void parseFile();
-void start();
 
 int main()
 {
     cout << "Overwrite-Files started" << endl;
-    start();
+#ifdef OVERWRITE_FILES_FROM_LIST
+    startOverwriteFiles();
+#endif
+#ifdef OVERWRITE_PARTITION
+    startOverwritePartition();
+#endif
+#ifdef DATA_BLOCKS
+    startCreateDataBlocks();
+#endif
     cout << "Overwrite-Files ende" << endl;
     return 0;
 }
@@ -204,21 +245,43 @@ public:
     }
 };
 
-void start()
+char* createNullArray()
 {
-    parseFile();
-    Stack<File> f;
-    Stack<Test> t;
-    for (int i = 0; i < nr; ++i) {
-        f.action(i);
-        t.action(i);
+    char* nullSpace = new char[POINTER_STORAGE_SIZE];
+    for (int i = 0; i < POINTER_STORAGE_SIZE; i++) {
+        nullSpace[i] = 0x0;
     }
-    f.deleteFile();
-    t.deleteFile();
-    cout << endl << endl;
-    for (int i = 0; i < logg.size(); ++i) {
-        cout << "ERROR: " << logg[i] << endl;
+    return nullSpace;
+}
+
+void checkComputerWrote()
+{
+    char* speicheradresse = reinterpret_cast<char*>(0x0);
+    char geleseneDaten[POINTER_STORAGE_SIZE];
+    std::memcpy(geleseneDaten, speicheradresse, sizeof(geleseneDaten));
+    for (int i = 0; i < POINTER_STORAGE_SIZE; i++) {
+        if (!(geleseneDaten[i] == 0x0)) {
+            cout << "ERROR at index:" << i << endl;
+            exit(1);
+        }
     }
+}
+
+void schreibeInDatei(const std::string& dateiname, const std::string& text) 
+{
+    ofstream datei(dateiname, ios::app);
+    if (datei.is_open()) {
+        datei << text;
+        datei.close();
+    }
+    else {
+        std::cerr << "Fehler beim Öffnen der Datei." << std::endl;
+    }
+}
+
+void writeBlock()
+{
+    schreibeInDatei("BLOCK", text);
 }
 
 void parseFile()
@@ -236,5 +299,56 @@ void parseFile()
     else {
         cout << "ERROR: " << PATH_TXT << " is not open.";
         exit(1);
+    }
+}
+
+void startOverwriteFiles()
+{
+    parseFile();
+    Stack<File> f;
+    Stack<Test> t;
+    for (int i = 0; i < nr; ++i) {
+        f.action(i);
+        t.action(i);
+    }
+    f.deleteFile();
+    t.deleteFile();
+    cout << endl << endl;
+    for (int i = 0; i < logg.size(); ++i) {
+        cout << "ERROR: " << logg[i] << endl;
+    }
+}
+
+void startOverwritePartition()
+{
+    string pathToPartition;
+    cout << "type a path to select a partition:" << endl;
+    cin >> pathToPartition;
+    cout << "Path:" << pathToPartition << endl;
+    ofstream file(pathToPartition, ios::binary);
+    if (!file.is_open()) {
+        cerr << "Cannot open device" << std::endl;
+    }
+    char* data = createNullArray();
+    char* address = reinterpret_cast<char*>(0x0);
+    std::memcpy(address, data, POINTER_STORAGE_SIZE);
+    file.close();
+    checkComputerWrote();
+}
+
+void startCreateDataBlocks()
+{
+    cout << "Wie viel GB:";
+    int gb;
+    cin >> gb;
+    text = "";
+    cout << "generating data" << endl;
+    for (int i = 0; i < BLOCK_SIZE; i++) {
+        text = text + "0";
+    }
+    int bis = gb * 2200;
+    for (int i = 0; i < bis; i++) {
+        writeBlock();
+        cout << "Wrote " << i << "/" << bis << endl;
     }
 }
