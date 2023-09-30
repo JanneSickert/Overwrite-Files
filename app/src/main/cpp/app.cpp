@@ -1,4 +1,20 @@
+/**
+* If this define statement exists, 
+* The App will overwite the files 
+* there are listet in Paths.txt
+* 
+*/
+#define OVERWRITE_FILES_FROM_LIST
+
+/**
+* If this statement is defind,
+* the user can select a partition to overwrite
+*/
+// #define OVERWRITE_PARTITION
+
+
 #pragma once
+
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>
@@ -9,6 +25,7 @@
 
 #define STRING_END '\0'
 #define NEW_LINE 0x5c
+#define POINTER_STORAGE_SIZE 1073742
 
 using namespace std;
 
@@ -18,12 +35,20 @@ unsigned int nr = 0;
 vector<string> logg;
 
 void parseFile();
-void start();
+void startOverwriteFiles();
+void startOverwritePartition();
+void createNullArray();
+void checkComputerWrote();
 
 int main()
 {
     cout << "Overwrite-Files started" << endl;
-    start();
+    #ifdef OVERWRITE_FILES_FROM_LIST
+    startOverwriteFiles();
+    #endif
+    #ifdef OVERWRITE_PARTITION
+    startOverwritePartition();
+    #endif
     cout << "Overwrite-Files ende" << endl;
     return 0;
 }
@@ -204,7 +229,27 @@ public:
     }
 };
 
-void start()
+char* createNullArray() {
+    char* nullSpace = new char[POINTER_STORAGE_SIZE];
+    for (int i = 0; i < POINTER_STORAGE_SIZE; i++) {
+        nullSpace[i] = 0x0;
+    }
+    return nullSpace;
+}
+
+void checkComputerWrote() {
+    char* speicheradresse = reinterpret_cast<char*>(0x0);
+    char geleseneDaten[POINTER_STORAGE_SIZE];
+    std::memcpy(geleseneDaten, speicheradresse, sizeof(geleseneDaten));
+    for (int i = 0; i < POINTER_STORAGE_SIZE; i++) {
+        if (!(geleseneDaten[i] == 0x0)) {
+            cout << "ERROR at index:" << i << endl;
+            exit(1);
+        }
+    }
+}
+
+void startOverwriteFiles()
 {
     parseFile();
     Stack<File> f;
@@ -221,20 +266,18 @@ void start()
     }
 }
 
-void parseFile()
-{
-    fstream pathFile;
-    pathFile.open(PATH_TXT, std::ios::in);
-    if (pathFile.is_open()) {
-        string buffer;
-        while (getline(pathFile, buffer)) {
-            paths.push_back(buffer);
-            ++nr;
-        }
-        pathFile.close();
+void startOverwritePartition() {
+    String pathToPartition;
+    cout << "type a path to select a partition:" << endl;
+    cin >> pathToPartition;
+    cout << "Path:" << pathToPartition << endl;
+    ofstream file(pathToPartition, ios::binary);
+    if (!file.is_open()) {
+        cerr << "Cannot open device" << std::endl;
     }
-    else {
-        cout << "ERROR: " << PATH_TXT << " is not open.";
-        exit(1);
-    }
+    char* data = createNullArray();
+    char* address = reinterpret_cast<char*>(0x0);
+    std::memcpy(address, data, POINTER_STORAGE_SIZE);
+    file.close();
+    checkComputerWrote();
 }
